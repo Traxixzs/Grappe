@@ -1,41 +1,47 @@
 <?php
-$existe = false
-    try
-    {
-        $db = new PDO('mysql:host=localhost;dbname=grappe;charset=utf8', 'root', 'root');
-    }
-    catch (Exception $e)
-    {
-            die('Erreur : ' . $e->getMessage());
-    }
+ $existe = FALSE;
+ $host  = $_SERVER['HTTP_HOST'];
+ $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+ $extra = 'connexion.php';
 
-    if (isset($_POST["email"]) && isset($_POST["pseudo"]) && isset($_POST["password"])){
-        $createid = $db->prepare('INSERT INTO utilisateur (email, pseudo, password ) VALUES (:email, :pseudo, :password)');
+try
+{
+    $db = new PDO('mysql:host=localhost;dbname=grappe;charset=utf8', 'root', 'root');
+}
+catch (Exception $e)
+{
+        die('Erreur : ' . $e->getMessage());
+}
 
-        try{
-            $createid->execute([
-                'email' => $_POST["email"],
-                'pseudo' => $_POST["pseudo"],
-                'password' => $_POST["password"]
-            ]);
-            }
-        catch(Exception $erreur){
+if (isset($_POST["email"]) && isset($_POST["nom_complet"]) && isset($_POST["pseudo"]) && isset($_POST["password"])){
+    $createid = $db->prepare('INSERT INTO utilisateur (email, nom_complet, pseudo, password ) VALUES (:email, :nom_complet, :pseudo, :password)');
 
-            if ($erreur->getCode() == 23000) {
-                $existe = true
-                echo "Ce pseudo/email est déjà utiliser";
-            }
-            else{
-                echo $erreur->getCode();
-            }
-    
-                     
-        }   
+    try{
+        $createid->execute([
+            'email' => $_POST["email"],
+            'nom_complet' => $_POST["nom_complet"],
+            'pseudo' => $_POST["pseudo"],
+            'password' => $_POST["password"]
+        ]);
     }
-    
+    catch(Exception $erreur){
+
+        if ($erreur->getCode() == 23000) {
+            echo "Ce pseudo/email est déjà utiliser";
+            $existe = TRUE;
+        }
+        else{
+            echo $erreur->getCode();
+        }          
+    }
+    if ($existe == FALSE) {
+        echo "toz ta raté ta vie";
+        header("Location: http://$host$uri/$extra");
+    }
+}
+
+
 ?>
-
-
 
 <html>
 <head>
@@ -43,41 +49,44 @@ $existe = false
     <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Grappes</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
 <body>
-    <form action="connexion.php " method="post">
+    <form action="" method="post">
         <div id="div_connexion">
-            <div id="logo_connexion">
-                 <img src="./assest/logo.png" alt=""> 
-                    <div id=text>
-                        <h1>Grappes</h1>
-                    </div>
+            <div id=logo>
+                <img src="./assest/Grappes.png" alt="">
             </div>
-            <div class="et">
-                <h3><strong>Inscrivez-vous <strong></h3>
+
+            <div>
+                <h2 id="text1">Inscrivez-vous</h2>
             </div>
             <div id="div_input">
-                <div class="et" id="div_email">
-                    <label><h6>email : </h6> </label><input placeholder="email" type="email" id="email" name="email" class="champ">
+                <div id="div_email">
+                   </label><input placeholder="email" type="email" id="email" name="email" class="champ">
                 </div>
                 <br>
-                <div class="et" id="div_id">
-                <label><h6>pseudo : </h6></label><input placeholder="pseudo"  type="text" id="pseudo" name="pseudo" class="champ">       
+                <div  id="div_nom">
+                    <input placeholder="Nom complet"  type="text" id="nom_complet" name="nom_complet" class="champ">       
                 </div>
                 <br>
-                <div class="et" id="div_password">
-                    <label><h6>mot de passe : </h6></label> <input placeholder="mot de passe" type="password" id="password" name="password" class="champ">
+                <div  id="div_id">
+                    <input placeholder="Nom d'utilisateur"  type="text" id="pseudo" name="pseudo" class="champ">       
                 </div>
                 <br>
-                <button class="et" type="submit" >Valider</button>
+
+                <div  id="div_password">
+                    </label> <input placeholder="Mot de passe" type="password" id="password" name="password" class="champ">
+                </div>
+                <br>
+                <button type="submit" id="btnValider">Valider</button>
+                
+                </form>   
             </div>
         </div>
-        
-    </form>
+    
 </body>
 
 </html>
