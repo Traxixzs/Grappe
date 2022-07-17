@@ -35,7 +35,6 @@ if (isset($_POST["email"]) && isset($_POST["nom_complet"]) && isset($_POST["pseu
         }          
     }
     if ($existe == FALSE) {
-        echo "toz ta raté ta vie";
         header("Location: http://$host$uri/$extra");
     }
 }
